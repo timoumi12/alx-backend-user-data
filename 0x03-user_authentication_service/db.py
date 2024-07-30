@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """DB module
 """
 import logging
@@ -30,11 +32,15 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
-    
+
     def add_user(self, email: str, hashed_password: str) -> User:
         '''saves the user to the db'''
         new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
-        self._session.commit()
+        try:
+            self._session.add(new_user)
+            self._session.commit()
+        except Exception as e:
+            print(f"Error adding user to database: {e}")
+            self._session.rollback()
+            raise
         return new_user
-    
