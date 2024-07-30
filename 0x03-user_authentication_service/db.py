@@ -4,8 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from user import User
-from user import Base
+from user import Base, User
 
 
 class DB:
@@ -32,7 +31,12 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         '''saves the user to the db'''
         new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
-        self._session.commit()
+        try:
+            self._session.add(new_user)
+            self._session.commit()
+        except Exception as e:
+            print(f"Error adding user to database: {e}")
+            self._session.rollback()
+            raise
         return new_user
     
