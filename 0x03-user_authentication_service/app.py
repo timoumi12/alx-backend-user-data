@@ -6,7 +6,6 @@ from auth import Auth
 
 logging.disable(logging.WARNING)
 
-
 AUTH = Auth()
 app = Flask(__name__)
 
@@ -15,6 +14,7 @@ app = Flask(__name__)
 def index() -> str:
     """returns json payload"""
     return jsonify({"message": "Bienvenue"})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
