@@ -20,6 +20,7 @@ def _hash_password(password: str) -> bytes:
     '''hashes a password and returns bytes'''
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
