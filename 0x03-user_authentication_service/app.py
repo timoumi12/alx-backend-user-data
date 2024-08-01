@@ -82,5 +82,38 @@ def profile() -> str:
     return jsonify({"email": user.email})
 
 
+@app.route("/reset_password", methods=["POST"], strict_slashes=False)
+def get_reset_password_token() -> str:
+    """get reset pwd token"""
+    # Retrieve the email from the form data
+    email = request.form.get("email")
+    try:
+        # Attempt to generate a reset token for the given email
+        reset_token = AUTH.get_reset_password_token(email)
+    except ValueError:
+        # If the email is not found in the database, raise a 403 error
+        abort(403)
+    # Return a JSON payload containing the email and reset token
+    return jsonify({"email": email, "reset_token": reset_token})
+
+
+@app.route("/reset_password", methods=["PUT"], strict_slashes=False)
+def update_password() -> str:
+    """update pwd route"""
+    # Retrieve the email, reset_token and new_password from the form data
+    email = request.form.get("email")
+    reset_token = request.form.get("reset_token")
+    new_password = request.form.get("new_password")
+    try:
+        # Attempt to update the password with the new password
+        AUTH.update_password(reset_token, new_password)
+    except ValueError:
+        # If the reset token is invalid, return an HTTP 403 error
+        abort(403)
+    # If the password was successfully updated, return a JSON object with the
+    # user's email and a success message.
+    return jsonify({"email": email, "message": "Password updated"})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
